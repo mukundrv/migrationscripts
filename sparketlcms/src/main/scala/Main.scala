@@ -6,17 +6,19 @@ import org.apache.spark.streaming.StreamingContext._ // not necessary since Spar
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.kinesis.KinesisInputDStream
 import org.apache.spark.streaming.{Seconds, StreamingContext}
-import org.apache.spark.sql.SparkSession
-//import spark.implicits._
+import org.apache.spark.sql._
 
 object cms {
 
 
   def main(args: Array[String]) {
 
-//    val conf = new SparkConf().setMaster("yarn").setAppName("sparketl")
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
+    val conf = new SparkConf().setMaster("yarn").setAppName("sparketl")
+    val spark = SparkSession.builder.appName("Simple Application").config(conf).getOrCreate()
+
+    import spark.implicits._
     val toDouble= udf[Double,String](_.toDouble)
+
     val dfg = spark.read.option("header","true").csv("s3://ag-mukund/cms/OP_DTL_GNRL_PGYR2017_P06292018.csv")
     //val dfo = spark.read.option("header","true").csv("s3://ag-mukund/cms/OP_DTL_OWNRSHP_PGYR2017_P06292018.csv")
     //val dfr = spark.read.option("header","true").csv("s3://ag-mukund/cms/OP_DTL_RSRCH_PGYR2017_P06292018.csv")
